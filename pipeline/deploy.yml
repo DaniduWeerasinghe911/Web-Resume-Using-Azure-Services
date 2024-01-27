@@ -28,16 +28,16 @@ stages:
               pathToPublish: $(Build.ArtifactStagingDirectory)
               artifactName: webApp.zip
 
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: 'azure-mvp-subscription'
-              scriptType: ps
-              scriptLocation: inlineScript
-              inlineScript: |
-                az --version
-                az deployment sub create -l 'australiaeast' `
-                --template-file 'bicep/main/cv-webapp.main.bicep' `
-                --parameters 'bicep/main/cv-webapp.main.bicepparam'
+          # - task: AzureCLI@2
+          #   inputs:
+          #     azureSubscription: 'azure-mvp-subscription'
+          #     scriptType: ps
+          #     scriptLocation: inlineScript
+          #     inlineScript: |
+          #       az --version
+          #       az deployment sub create -l 'australiaeast' `
+          #       --template-file 'bicep/main/cv-webapp.main.bicep' `
+          #       --parameters 'bicep/main/cv-webapp.main.bicepparam'
 
           - task: DownloadPipelineArtifact@2
             inputs:
