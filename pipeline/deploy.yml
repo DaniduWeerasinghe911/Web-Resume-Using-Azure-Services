@@ -23,14 +23,39 @@ stages:
             inputs:
               contents: 'app/**'
               targetFolder: $(Build.ArtifactStagingDirectory)
-          - task: AzureCLI@2
+
+          - script: |
+              npm install
+            displayName: 'npm install'
+
+          - script: |
+              npm run build
+            displayName: 'npm build'
+
+          # - task: CopyFiles@2
+          #   inputs:
+          #     sourceFolder: '$(Build.SourcesDirectory)'
+          #     contents: |
+          #       src/*
+          #       dist/*
+          #     targetFolder: '$(Build.ArtifactStagingDirectory)'
+          #   displayName: 'Copy project files'
+
+          - task: PublishPipelineArtifact@1
             inputs:
-              azureSubscription: 'azure-mvp-subscription'
-              scriptType: ps
-              scriptLocation: inlineScript
-              inlineScript: |
-                az --version
-                Compress-Archive -Path $(Build.ArtifactStagingDirectory)/* -DestinationPath webApp.zip
+              artifactName: e2e-server
+              targetPath: '$(Build.ArtifactStagingDirectory)'
+              publishLocation: 'pipeline'
+            displayName: 'Publish npm artifact'
+
+          # - task: AzureCLI@2
+          #   inputs:
+          #     azureSubscription: 'azure-mvp-subscription'
+          #     scriptType: ps
+          #     scriptLocation: inlineScript
+          #     inlineScript: |
+          #       az --version
+          #       Compress-Archive -Path $(Build.ArtifactStagingDirectory)/* -DestinationPath webApp.zip
 
 
 
@@ -45,15 +70,15 @@ stages:
           #       --template-file 'bicep/main/cv-webapp.main.bicep' `
           #       --parameters 'bicep/main/cv-webapp.main.bicepparam'
 
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              source: 'current'
-              path: $(Build.ArtifactStagingDirectory)
+          # - task: DownloadPipelineArtifact@2
+          #   inputs:
+          #     source: 'current'
+          #     path: $(Build.ArtifactStagingDirectory)
 
-          - task: AzureWebApp@1
-            inputs:
-              azureSubscription: 'azure-mvp-subscription'
-              appType: 'webAppLinux'
-              appName: 'danidu-resume-cv-web'
-              resourceGroupName: 'danidu-resume-cv-rg'
-              package: '$(System.DefaultWorkingDirectory)/webApp.zip'
+          # - task: AzureWebApp@1
+          #   inputs:
+          #     azureSubscription: 'azure-mvp-subscription'
+          #     appType: 'webAppLinux'
+          #     appName: 'danidu-resume-cv-web'
+          #     resourceGroupName: 'danidu-resume-cv-rg'
+          #     package: '$(System.DefaultWorkingDirectory)/webApp.zip'
