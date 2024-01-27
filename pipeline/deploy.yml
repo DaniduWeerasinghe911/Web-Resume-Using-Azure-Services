@@ -39,11 +39,6 @@ stages:
                 --template-file 'bicep/main/cv-webapp.main.bicep' `
                 --parameters 'bicep/main/cv-webapp.main.bicepparam'
 
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              source: 'current'
-              artifact: 'drop'
-              path: $(Build.ArtifactStagingDirectory)
 
           - task: AzureWebApp@1
             inputs:
@@ -51,4 +46,4 @@ stages:
               appType: 'webAppLinux'
               appName: 'danidu-resume-cv-web'
               resourceGroupName: 'danidu-resume-cv-rg'
-              package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+              package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
