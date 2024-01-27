@@ -1,0 +1,32 @@
+trigger:
+- none
+
+name: CV-Web-App
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: Deploy_CV_WEB
+  
+  jobs:
+  - deployment: 'Lint_Web_App'
+    displayName: 'Lint_Web_App'
+    environment: Azure-IAC
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+
+          - task: CopyFiles@2
+            inputs:
+              contents: 'app/**'
+              targetFolder: $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: webApp.zip
+
+ 
+                
