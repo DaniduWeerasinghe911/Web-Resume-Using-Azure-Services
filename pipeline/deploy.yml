@@ -6,154 +6,46 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x'  
 
-pool:
-  vmImage: 'ubuntu-latest'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
 
-steps:
-- checkout: self
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
 
-- task: UseNode@1
-  inputs:
-    version: '16.x'
-  displayName: 'Install Node.js'
+    - name: npm install, build, and test
+      run: |
+        npm install
+        npm run build --if-present
+        npm run test --if-present
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v4
+      with:
+        name: node-app
+        path: .
 
-- script: |
-    ls
-    npm install --cache /tmp/empty-cache
-  displayName: 'npm install'
-  workingDirectory: '$(Build.SourcesDirectory)/App'
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-- script: |
-    npm run build
-  displayName: 'npm build'
-  workingDirectory: '$(Build.SourcesDirectory)/App'
-
-- task: CopyFiles@2
-  inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: |
-       dist/*
-       public/*
-       scripts/*
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
-  displayName: 'Copy project files'
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    artifactName: cv
-    targetPath: '$(Build.ArtifactStagingDirectory)'
-    publishLocation: 'pipeline'
-  displayName: 'Publish npm artifact'
-
-- name: Download artifact from build job
+    steps:
+    - name: Download artifact from build job
       uses: actions/download-artifact@v4
       with:
-        name: cv
+        name: node-app
 
-- name: 'Deploy to Azure WebApp'
-  id: deploy-to-webapp 
-  uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
-    with:
-      app-name: ${{ env.AZURE_WEBAPP_NAME }}
-      publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-      package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-
-
-# - task: AzureRmWebAppDeployment@4
-#   inputs:
-#     ConnectionType: 'AzureRM'
-#     azureSubscription: 'azure-mvp-subscription'
-#     appType: 'webAppLinux'
-#     WebAppName: 'danidu-resume-cv-web'
-#     packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
-
-# trigger:
-# - none
-
-# name: CV-Web-App
-
-# pool:
-#   vmImage: 'ubuntu-latest'
-
-# stages:
-# - stage: Deploy_CV_WEB
-  
-#   jobs:
-#   - deployment: 'Lint_Web_App'
-#     displayName: 'Lint_Web_App'
-#     environment: Azure-IAC
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - checkout: self
-
-#           - task: UseNode@1
-#             inputs:
-#               version: '16.x'
-#             displayName: 'Install Node.js'
-          
-#           - task: CopyFiles@2
-#             inputs:
-#               contents: 'app/**'
-#               targetFolder: $(Build.ArtifactStagingDirectory)
-#           - script: |
-#               npm install
-#             displayName: 'npm install'
-#             workingDirectory: '$(Build.ArtifactStagingDirectory)/app'
-
-#           - script: |
-#               npm run build
-#             displayName: 'npm build'
-
-         
-#           # - task: CopyFiles@2
-#           #   inputs:
-#           #     sourceFolder: '$(Build.SourcesDirectory)'
-#           #     contents: |
-#           #       src/*
-#           #       dist/*
-#           #     targetFolder: '$(Build.ArtifactStagingDirectory)'
-#           #   displayName: 'Copy project files'
-
-#           - task: PublishPipelineArtifact@1
-#             inputs:
-#               artifactName: e2e-server
-#               targetPath: '$(Build.ArtifactStagingDirectory)'
-#               publishLocation: 'pipeline'
-#             displayName: 'Publish npm artifact'
-
-#           # - task: AzureCLI@2
-#           #   inputs:
-#           #     azureSubscription: 'azure-mvp-subscription'
-#           #     scriptType: ps
-#           #     scriptLocation: inlineScript
-#           #     inlineScript: |
-#           #       az --version
-#           #       Compress-Archive -Path $(Build.ArtifactStagingDirectory)/* -DestinationPath webApp.zip
-
-
-
-#           # - task: AzureCLI@2
-#           #   inputs:
-#           #     azureSubscription: 'azure-mvp-subscription'
-#           #     scriptType: ps
-#           #     scriptLocation: inlineScript
-#           #     inlineScript: |
-#           #       az --version
-#           #       az deployment sub create -l 'australiaeast' `
-#           #       --template-file 'bicep/main/cv-webapp.main.bicep' `
-#           #       --parameters 'bicep/main/cv-webapp.main.bicepparam'
-
-#           # - task: DownloadPipelineArtifact@2
-#           #   inputs:
-#           #     source: 'current'
-#           #     path: $(Build.ArtifactStagingDirectory)
-
-#           # - task: AzureWebApp@1
-#           #   inputs:
-#           #     azureSubscription: 'azure-mvp-subscription'
-#           #     appType: 'webAppLinux'
-#           #     appName: 'danidu-resume-cv-web'
-#           #     resourceGroupName: 'danidu-resume-cv-rg'
-#           #     package: '$(System.DefaultWorkingDirectory)/webApp.zip'
+    - name: 'Deploy to Azure WebApp'
+      id: deploy-to-webapp 
+      uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
