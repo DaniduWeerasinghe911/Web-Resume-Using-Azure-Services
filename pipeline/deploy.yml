@@ -1,0 +1,54 @@
+trigger:
+- none
+
+name: CV-Web-App
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: Deploy_CV_WEB
+  
+  jobs:
+  - deployment: 'Lint_Web_App'
+    displayName: 'Lint_Web_App'
+    environment: Azure-IAC
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+
+          - task: CopyFiles@2
+            inputs:
+              contents: 'app/**'
+              targetFolder: $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: webApp.zip
+
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'azure-mvp-subscription'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                az --version
+                az deployment sub create -l 'australiaeast' `
+                --template-file 'bicep/main/cv-webapp.main.bicep' `
+                --parameters 'bicep/main/cv-webapp.main.bicepparam'
+
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              source: 'current'
+              artifact: 'drop'
+              path: $(Build.ArtifactStagingDirectory)
+
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: 'azure-mvp-subscription'
+              appType: 'webAppLinux'
+              appName: 'danidu-resume-cv-web'
+              resourceGroupName: 'danidu-resume-cv-rg'
+              package: '$(System.DefaultWorkingDirectory)/**/*.zip'
