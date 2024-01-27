@@ -5,6 +5,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- checkout: self
+
 - task: UseNode@1
   inputs:
     version: '16.x'
@@ -13,10 +15,12 @@ steps:
 - script: |
     npm install --cache /tmp/empty-cache
   displayName: 'npm install'
+  workingDirectory: '$(Build.SourcesDirectory)/app'
 
 - script: |
     npm run build
   displayName: 'npm build'
+  workingDirectory: '$(Build.SourcesDirectory)/app'
 
 # trigger:
 # - none
