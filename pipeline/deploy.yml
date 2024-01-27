@@ -23,10 +23,16 @@ stages:
             inputs:
               contents: 'app/**'
               targetFolder: $(Build.ArtifactStagingDirectory)
-          - task: PublishBuildArtifacts@1
+          - task: AzureCLI@2
             inputs:
-              pathToPublish: $(Build.ArtifactStagingDirectory)
-              artifactName: webApp.zip
+              azureSubscription: 'azure-mvp-subscription'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                az --version
+                Compress-Archive -Path $(Build.ArtifactStagingDirectory)/* -DestinationPath webApp.zip
+
+
 
           # - task: AzureCLI@2
           #   inputs:
