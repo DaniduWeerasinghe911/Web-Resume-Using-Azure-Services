@@ -11,8 +11,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm cache clean
-    npm install
+    npm install --cache /tmp/empty-cache
   displayName: 'npm install'
 
 - script: |
