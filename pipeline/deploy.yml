@@ -16,12 +16,12 @@ steps:
     ls
     npm install --cache /tmp/empty-cache
   displayName: 'npm install'
-  workingDirectory: '$(Build.SourcesDirectory)'
+  workingDirectory: '$(Build.SourcesDirectory)/App'
 
 - script: |
     npm run build
   displayName: 'npm build'
-  workingDirectory: '$(Build.SourcesDirectory)/app'
+  workingDirectory: '$(Build.SourcesDirectory)/App'
 
 # trigger:
 # - none
