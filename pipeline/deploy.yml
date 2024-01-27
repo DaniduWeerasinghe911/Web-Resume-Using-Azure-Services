@@ -40,6 +40,14 @@ steps:
     publishLocation: 'pipeline'
   displayName: 'Publish npm artifact'
 
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'azure-mvp-subscription'
+    appType: 'webAppLinux'
+    WebAppName: 'danidu-resume-cv-web'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
 # trigger:
 # - none
 
