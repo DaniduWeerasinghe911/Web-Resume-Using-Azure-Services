@@ -62,7 +62,7 @@ module aspWeb '../modules/web/app-service-plan/app-service-plan.bicep' = {
   scope:resourceGroup(rg_webservices.name)
   params: {
     location: location
-    appKind: 'windows'
+    appKind: 'linux'
     appPlanName: webAppPlanName
     skuCapacity:  aspConfig.skuCapacity
     skuName: aspConfig.skuName

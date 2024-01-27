@@ -8,8 +8,8 @@ param tags = {}
 param isProd = false
 param aspConfig = {
   skuCapacity: 1
-  sku: 'S1'
-  kind: 'windows'
+  skuName: 'S1'
+  skutier: 'S1'
 }
 
 
