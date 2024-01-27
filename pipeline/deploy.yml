@@ -42,7 +42,6 @@ stages:
           - task: DownloadPipelineArtifact@2
             inputs:
               source: 'current'
-              artifact: 'webApp.zip'
               path: $(Build.ArtifactStagingDirectory)
 
           - task: AzureWebApp@1
@@ -51,4 +50,4 @@ stages:
               appType: 'webAppLinux'
               appName: 'danidu-resume-cv-web'
               resourceGroupName: 'danidu-resume-cv-rg'
-              package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+              package: '$(System.DefaultWorkingDirectory)/**/webApp.zip'
