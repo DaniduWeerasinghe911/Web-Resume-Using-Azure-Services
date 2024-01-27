@@ -50,4 +50,4 @@ stages:
               appType: 'webAppLinux'
               appName: 'danidu-resume-cv-web'
               resourceGroupName: 'danidu-resume-cv-rg'
-              package: '$(System.DefaultWorkingDirectory)/**/webApp.zip'
+              package: '$(System.DefaultWorkingDirectory)/webApp.zip'
