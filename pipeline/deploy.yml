@@ -19,10 +19,6 @@ stages:
           steps:
           - checkout: self
 
-          - task: CopyFiles@2
-            inputs:
-              contents: 'app/**'
-              targetFolder: $(Build.ArtifactStagingDirectory)
           - task: UseNode@1
             inputs:
               version: '16.x'
@@ -36,6 +32,10 @@ stages:
               npm run build
             displayName: 'npm build'
 
+          - task: CopyFiles@2
+            inputs:
+              contents: 'app/**'
+              targetFolder: $(Build.ArtifactStagingDirectory)
           # - task: CopyFiles@2
           #   inputs:
           #     sourceFolder: '$(Build.SourcesDirectory)'
