@@ -13,10 +13,9 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    ls
     npm install --cache /tmp/empty-cache
   displayName: 'npm install'
-  workingDirectory: '$(Build.SourcesDirectory)/app'
+  workingDirectory: '$(Build.SourcesDirectory)'
 
 - script: |
     npm run build
