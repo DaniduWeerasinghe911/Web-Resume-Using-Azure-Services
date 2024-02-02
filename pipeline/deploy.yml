@@ -26,9 +26,12 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    sourceFolder: '$(Build.SourcesDirectory)/App'
+    sourceFolder: '$(Build.SourcesDirectory)'
     contents: |
-       *
+      **/*
+      !.git/**/*
+      !Bicep/**/*
+      !pipeline/**/*
     targetFolder: '$(Build.ArtifactStagingDirectory)'
   displayName: 'Copy project files'
 
