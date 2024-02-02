@@ -30,11 +30,9 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
+    sourceFolder: '$(Build.SourcesDirectory)/app'
     contents: |
-       dist/*
-       public/*
-       scripts/*
+       *
     targetFolder: '$(Build.ArtifactStagingDirectory)'
   displayName: 'Copy project files'
 
