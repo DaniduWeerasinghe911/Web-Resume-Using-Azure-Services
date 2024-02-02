@@ -44,6 +44,7 @@ steps:
     source: 'current'
     artifactName: cv
     path: $(Build.ArtifactStagingDirectory)
+    targetPath: $(System.DefaultWorkingDirectory)
     
 - task: AzureWebApp@1
   inputs:
@@ -51,4 +52,4 @@ steps:
     appType: 'webAppLinux'
     appName: 'danidu-resume-cv-web'
     resourceGroupName: 'danidu-resume-cv-rg'
-    package: '.'
+    package: $(System.DefaultWorkingDirectory)/**/*.zip'
