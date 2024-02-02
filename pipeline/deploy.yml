@@ -17,12 +17,12 @@ steps:
     ls
     npm install --cache /tmp/empty-cache
   displayName: 'npm install'
-  workingDirectory: '$(Build.SourcesDirectory)/App'
+  workingDirectory: '$(Build.SourcesDirectory)'
 
 - script: |
     npm run build
   displayName: 'npm build'
-  workingDirectory: '$(Build.SourcesDirectory)/App'
+  workingDirectory: '$(Build.SourcesDirectory)'
 
 - task: CopyFiles@2
   inputs:
