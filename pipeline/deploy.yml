@@ -17,23 +17,20 @@ steps:
     ls
     npm install --cache /tmp/empty-cache
   displayName: 'npm install'
-  workingDirectory: '$(Build.SourcesDirectory)'
 
 - script: |
     npm run build
   displayName: 'npm build'
   workingDirectory: '$(Build.SourcesDirectory)'
 
-- task: CopyFiles@2
+- task: ArchiveFiles@2
   inputs:
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: |
-      **/*
-      !.git/**/*
-      !Bicep/**/*
-      !pipeline/**/*
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
-  displayName: 'Copy project files'
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/dist'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
 
 - task: PublishPipelineArtifact@1
   inputs:
