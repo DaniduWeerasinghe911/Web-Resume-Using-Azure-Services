@@ -124,7 +124,8 @@ Replace the default photo with your own in the specified folder. Ensure you use 
 
 ### Import the Pipeline into Azure DevOps and Run the Pipeline
 
-Finally, import the CI/CD pipeline configuration into Azure DevOps. This configuration is designed to automate the deployment process. Once imported, run the pipeline to deploy your customized CV website to Azure App Service seamlessly.
+Finally, import the CI/CD pipeline configuration into Azure DevOps. This configuration is designed to automate the deployment process. Once imported, Update the service connection names and subscription IDs 
+run the pipeline to deploy your customized CV website to Azure App Service seamlessly.
 
 Hope you enjoy this fun little project. I will be adding a few more things into the pipeline in the coming weeks like:
 
