@@ -1,12 +1,25 @@
 trigger:
 - main
 
-
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
 - checkout: self
+
+- task: AzureCLI@2
+    name: LintSubscriptionBuild
+    displayName: 'Run preflight validation' 
+    inputs: 
+      azureSubscription: ${{ variables.azureServiceConnection }}
+      scriptType: 'pscore'  
+      scriptLocation: 'inlineScript'  
+      inlineScript: |
+        az account set --subscription 'SUBID'
+        az deployment sub what-if --location ${{ variables.location }} `
+        --template-file bicep/main/cv-webapp.main.bicep `
+        --parameters bicep/main/cv-webapp.main.bicepparam
+
 
 - task: UseNode@1
   inputs:
